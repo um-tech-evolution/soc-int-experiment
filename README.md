@@ -28,7 +28,7 @@ julia> Pkg.add("Gadfly")
 
 To run the simulation once you have the prerequisites:
 
-  1. `julia simulation.jl`
+  1. `julia simulation.jl | tee output.csv`
   2. `julia analysis.jl`
 
 This will create an `output.csv` file and three plots of key results as SVG

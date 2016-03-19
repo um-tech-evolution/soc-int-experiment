@@ -3,6 +3,14 @@ using Gadfly
 
 df = readtable("output.csv", makefactors=true)
 
+df = by(df, [:generation, :simulationType]) do d
+  DataFrame(
+    meanFitness=mean(d[:meanFitness]),
+    medianFitness=median(d[:medianFitness]),
+    maxFitness=maximum(d[:maxFitness])
+  )
+end
+
 # Plot development
 
 function drawPlot(variable)

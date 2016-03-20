@@ -73,7 +73,7 @@ for trial = 1:T
     fits = NK.popfits(sp)
     outputrow(trial, "social", i, fits)
 
-    NK.bsmutate!(sp, 1.0)
+    NK.bwmutate!(sp, 1.0 / N)
     NK.elitesel!(sp, E)
 
     PM.next!(progress)
@@ -89,7 +89,7 @@ for trial = 1:T
       g = ip.genotypes[i]
       choice = g
       for _ = 1:C
-        option = NK.bsmutate(g, 1.0)
+        option = NK.bwmutate(g, 1.0 / N)
         if NK.fitness(option) > NK.fitness(choice)
           choice = option
         end

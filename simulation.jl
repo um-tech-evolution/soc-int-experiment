@@ -10,11 +10,31 @@ const C = 5    # Intelligence choices
 const M = 100  # Moran selection rounds
 const T = 10   # Number of trials
 
-function outputrow(trial, simtype, generation, fits)
-  println("$(trial),$(simtype),$(generation),$(mean(fits)),$(median(fits)),$(maximum(fits))")
+out = open("N=$(N)_K=$(K)_P=$(P)_G=$(G)_E=$(E)_C=$(C)_M=$(M)_T=$(T).csv", "w")
+
+function writeheader()
+  write(out, join([
+    "trial",
+    "simulationType",
+    "generation",
+    "meanFitness",
+    "medianFitness",
+    "maxFitness"
+  ], ","), "\n")
 end
 
-println("trial,simulationType,generation,meanFitness,medianFitness,maxFitness")
+function outputrow(trial, simtype, generation, fits)
+  write(out, join([
+    trial,
+    simtype,
+    generation,
+    mean(fits),
+    median(fits),
+    maximum(fits)
+  ], ","), "\n")
+end
+
+writeheader()
 
 for trial = 1:T
   l = NK.NKLandscape(N, K)
@@ -50,4 +70,6 @@ for trial = 1:T
     NK.moransel!(ip, M)
   end
 end
+
+close(out)
 

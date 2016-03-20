@@ -1,40 +1,67 @@
+import ProgressMeter
+const PM = ProgressMeter
 import NKLandscapes
 const NK = NKLandscapes
+import YAML
 
-const N = 32
-const K = 1
-const P = 100  # Population size
-const G = 100  # Generations
-const E = 2    # Elite carryover
-const C = 5    # Intelligence choices
-const M = 100  # Moran selection rounds
-const T = 10   # Number of trials
+if length(ARGS) == 0
+    error("No simulation config specified.")
+end
 
-out = open("N=$(N)_K=$(K)_P=$(P)_G=$(G)_E=$(E)_C=$(C)_M=$(M)_T=$(T).csv", "w")
+simname = ARGS[1]
+
+config = YAML.load_file("$(simname).yaml")
+
+N = config["N"]
+K = config["K"]
+P = config["P"] # Population size
+G = config["G"] # Generations
+E = config["E"] # Elite carryover
+C = config["C"] # Intelligence choices
+M = config["M"] # Moran selection rounds
+T = config["T"] # Number of trials
+
+out = open("$(simname).csv", "w")
 
 function writeheader()
   write(out, join([
+    "# N=$(N)",
+    "# K=$(K)",
+    "# P=$(P)",
+    "# G=$(G)",
+    "# E=$(E)",
+    "# C=$(C)",
+    "# M=$(M)",
+    "# T=$(T)"
+  ], "\n"), "\n")
+  line = join([
     "trial",
     "simulationType",
     "generation",
     "meanFitness",
     "medianFitness",
     "maxFitness"
-  ], ","), "\n")
+  ], ",")
+  write(out, line, "\n")
+  flush(out)
 end
 
 function outputrow(trial, simtype, generation, fits)
-  write(out, join([
+  line = join([
     trial,
     simtype,
     generation,
     mean(fits),
     median(fits),
     maximum(fits)
-  ], ","), "\n")
+  ], ",")
+  write(out, line, "\n")
+  flush(out)
 end
 
 writeheader()
+
+progress = PM.Progress(T * G * 2, 1, "Running...", 40)
 
 for trial = 1:T
   l = NK.NKLandscape(N, K)
@@ -48,6 +75,8 @@ for trial = 1:T
 
     NK.bsmutate!(sp, 1.0)
     NK.elitesel!(sp, E)
+
+    PM.next!(progress)
   end
 
   # Intelligence
@@ -68,6 +97,8 @@ for trial = 1:T
       ip.genotypes[i] = choice
     end
     NK.moransel!(ip, M)
+
+    PM.next!(progress)
   end
 end
 

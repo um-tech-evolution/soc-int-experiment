@@ -1,14 +1,16 @@
 using DataFrames
 using Gadfly
+import YAML
 
 if length(ARGS) == 0
-  println("CSV filename required.")
+  error("No simulation config specified.")
 end
 
-csvfilename = ARGS[1]
-svgbase = join(split(csvfilename, ".")[1:end-1], ".")
+simname = ARGS[1]
 
-df = readtable(csvfilename, makefactors=true)
+config = YAML.load_file("$(simname).yaml")
+
+df = readtable("$(simname).csv", makefactors=true, allowcomments=true)
 
 df = by(df, [:generation, :simulationType]) do d
   DataFrame(
@@ -21,8 +23,10 @@ end
 # Plot development
 
 function drawPlot(variable)
-  p = plot(df, x="generation", y=variable, color="simulationType", Geom.line)
-  draw(SVG("$(svgbase)_$(variable).svg", 12inch, 12inch), p)
+  p = plot(df, x="generation", y=variable, color="simulationType",
+    Geom.line,
+    Guide.title("$(variable) - N=$(config["N"]), K=$(config["K"])"))
+  draw(SVG("$(simname)_$(variable).svg", 8inch, 8inch), p)
 end
 
 drawPlot("meanFitness")

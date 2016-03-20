@@ -2,6 +2,6 @@
 
 set -e
 
-julia simulation.jl | tee output.csv
-julia analysis.jl
+julia simulation.jl $1
+julia analysis.jl $1
 

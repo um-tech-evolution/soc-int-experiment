@@ -1,0 +1,9 @@
+---
+N: 32  # N parameter of NK
+K: 16  # K parameter of NK
+P: 100 # Population size
+G: 100 # Generations
+E: 2   # Elite carryover
+C: 5   # Intelligence choices
+M: 100 # Moran selection rounds
+T: 10  # Number of trials

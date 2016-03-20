@@ -31,6 +31,8 @@ To run the simulation once you have the prerequisites:
   1. `julia simulation.jl | tee output.csv`
   2. `julia analysis.jl`
 
+There is also a script that will do just this: `./run.sh`.
+
 This will create an `output.csv` file and three plots of key results as SVG
 files.
 

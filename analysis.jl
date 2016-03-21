@@ -1,3 +1,5 @@
+module SocIntAnalysis
+
 using DataFrames
 using Gadfly
 import YAML
@@ -32,4 +34,6 @@ end
 drawPlot("meanFitness")
 drawPlot("medianFitness")
 drawPlot("maxFitness")
+
+end
 

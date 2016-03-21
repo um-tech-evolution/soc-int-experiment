@@ -6,27 +6,10 @@
   2. The `bits-refactor` branch of NKLandscapes.jl
   3. DataFrames.jl, YAML.jl, ProgressMeter.jl, and Gadfly.jl
 
-To satisfy item (2) above:
+To satisfy items (2) and (3) above:
 
-```
-julia> Pkg.add("NKLandscapes")
-...
-julia> Pkg.checkout("NKLandscapes", "bits-refactor")
-...
-```
-
-To satisfy item (3) above:
-
-```
-julia> Pkg.add("DataFrames")
-...
-julia> Pkg.add("Gadfly")
-...
-julia> Pkg.add("YAML")
-...
-julia> Pkg.add("ProgressMeter")
-...
-```
+  * Linux: `julia setup.jl`
+  * Windows: `julia.exe setup.jl`
 
 ## Setup
 

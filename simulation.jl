@@ -1,3 +1,5 @@
+module SocIntSim
+
 import ProgressMeter
 const PM = ProgressMeter
 import NKLandscapes
@@ -104,3 +106,4 @@ end
 
 close(out)
 
+end

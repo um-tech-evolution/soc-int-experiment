@@ -1,5 +1,4 @@
 module SocIntSim
-
 import ProgressMeter
 const PM = ProgressMeter
 import NKLandscapes
@@ -9,11 +8,9 @@ import YAML
 if length(ARGS) == 0
     error("No simulation config specified.")
 end
-
 simname = ARGS[1]
 
 config = YAML.load_file("$(simname).yaml")
-
 N = config["N"]
 K = config["K"]
 P = config["P"] # Population size
@@ -23,10 +20,8 @@ C = config["C"] # Intelligence choices
 M = config["M"] # Moran selection rounds
 T = config["T"] # Number of trials
 
-out = open("$(simname).csv", "w")
-
-function writeheader()
-  write(out, join([
+function writeheader(stream)
+  write(stream, join([
     "# N=$(N)",
     "# K=$(K)",
     "# P=$(P)",
@@ -44,11 +39,10 @@ function writeheader()
     "medianFitness",
     "maxFitness"
   ], ",")
-  write(out, line, "\n")
-  flush(out)
+  write(stream, line, "\n")
 end
 
-function outputrow(trial, simtype, generation, fits)
+function writerow(stream, trial, simtype, generation, fits)
   line = join([
     trial,
     simtype,
@@ -57,15 +51,10 @@ function outputrow(trial, simtype, generation, fits)
     median(fits),
     maximum(fits)
   ], ",")
-  write(out, line, "\n")
-  flush(out)
+  write(stream, line, "\n")
 end
 
-writeheader()
-
-progress = PM.Progress(T * G * 2, 1, "Running...", 40)
-
-for trial = 1:T
+function runtrial(trial, stream, progress)
   l = NK.NKLandscape(N, K)
   p = rand(NK.Population, l, P)
 
@@ -73,7 +62,7 @@ for trial = 1:T
   sp = NK.Population(p)
   for i = 1:G
     fits = NK.popfits(sp)
-    outputrow(trial, "social", i, fits)
+    writerow(stream, trial, "social", i, fits)
 
     NK.bwmutate!(sp, 1.0 / N)
     NK.elitesel!(sp, E)
@@ -85,7 +74,7 @@ for trial = 1:T
   ip = NK.Population(p)
   for i = 1:G
     fits = NK.popfits(ip)
-    outputrow(trial, "intelligence", i, fits)
+    writerow(stream, trial, "intelligence", i, fits)
 
     for i = 1:NK.popsize(ip)
       g = ip.genotypes[i]
@@ -104,6 +93,16 @@ for trial = 1:T
   end
 end
 
-close(out)
+# Run the simulation
+
+stream = open("$(simname).csv", "w")
+progress = PM.Progress(T * G * 2, 1, "Running...", 40)
+writeheader(stream)
+for trial = 1:T
+  runtrial(trial, stream, progress)
+  flush(stream)
+end
+close(stream)
 
 end
+

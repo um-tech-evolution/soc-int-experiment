@@ -27,7 +27,7 @@ end
 function drawPlot(variable)
   p = plot(df, x="generation", y=variable, color="simulationType",
     Geom.line,
-    Guide.title("$(variable) - N=$(config["N"]), K=$(config["K"])"))
+    Guide.title("$(variable) (N=$(config["N"]), K=$(config["K"]))"))
   draw(SVG("$(simname)_$(variable).svg", 8inch, 8inch), p)
 end
 

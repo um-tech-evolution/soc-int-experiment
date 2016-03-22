@@ -11,14 +11,18 @@ end
 simname = ARGS[1]
 
 config = YAML.load_file("$(simname).yaml")
-N = config["N"]
-K = config["K"]
-P = config["P"] # Population size
-G = config["G"] # Generations
-E = config["E"] # Elite carryover
-C = config["C"] # Intelligence choices
-M = config["M"] # Moran selection rounds
-T = config["T"] # Number of trials
+getconfig(key) = config[key] |> string |> parse |> eval
+
+N     = getconfig("N")
+K     = getconfig("K")
+P     = getconfig("P")     # Population size
+G     = getconfig("G")     # Generations
+E     = getconfig("E")     # Elite carryover
+C     = getconfig("C")     # Intelligence choices
+M     = getconfig("M")     # Moran selection rounds
+T     = getconfig("T")     # Number of trials
+W_soc = getconfig("W_soc") # Bitwise mutation rate (social)
+W_int = getconfig("W_int") # Bitwise mutation rate (intelligence)
 
 function writeheader(stream)
   write(stream, join([
@@ -64,7 +68,7 @@ function runtrial(trial, stream, progress)
     fits = NK.popfits(sp)
     writerow(stream, trial, "social", i, fits)
 
-    NK.bwmutate!(sp, 1.0 / N)
+    NK.bwmutate!(sp, W_soc)
     NK.elitesel!(sp, E)
 
     PM.next!(progress)
@@ -80,7 +84,7 @@ function runtrial(trial, stream, progress)
       g = ip.genotypes[i]
       choice = g
       for _ = 1:C
-        option = NK.bwmutate(g, 1.0 / N)
+        option = NK.bwmutate(g, W_int)
         if NK.fitness(option) > NK.fitness(choice)
           choice = option
         end

@@ -17,8 +17,8 @@ df = readtable("$(simname).csv", makefactors=true, allowcomments=true)
 df = by(df, [:generation, :simulationType]) do d
   DataFrame(
     meanFitness=mean(d[:meanFitness]),
-    medianFitness=median(d[:medianFitness]),
-    maxFitness=maximum(d[:maxFitness])
+    medianFitness=mean(d[:medianFitness]),
+    maxFitness=mean(d[:maxFitness])
   )
 end
 
@@ -27,7 +27,7 @@ end
 function drawPlot(variable)
   p = plot(df, x="generation", y=variable, color="simulationType",
     Geom.line,
-    Guide.title("$(variable) (N=$(config["N"]), K=$(config["K"]))"))
+    Guide.title("$(variable) (N=$(config["N"]), K=$(config["K"]), SEL=$(config["S"]), Trials=$(config["T"]))"))
   draw(SVG("$(simname)_$(variable).svg", 8inch, 8inch), p)
 end
 

@@ -17,12 +17,14 @@ N     = getconfig("N")
 K     = getconfig("K")
 P     = getconfig("P")     # Population size
 G     = getconfig("G")     # Generations
+S     = config["S"]        # Intelligence selection type: M: moran; P: proportional; T: tournament; N: none
 E     = getconfig("E")     # Elite carryover
 C     = getconfig("C")     # Intelligence choices
-M     = getconfig("M")     # Moran selection rounds
+M     = getconfig("M")     # Moran selection rounds 
 T     = getconfig("T")     # Number of trials
 W_soc = getconfig("W_soc") # Bitwise mutation rate (social)
 W_int = getconfig("W_int") # Bitwise mutation rate (intelligence)
+
 
 function writeheader(stream)
   write(stream, join([
@@ -30,6 +32,7 @@ function writeheader(stream)
     "# K=$(K)",
     "# P=$(P)",
     "# G=$(G)",
+    "# S=$(S)",
     "# E=$(E)",
     "# C=$(C)",
     "# M=$(M)",
@@ -91,8 +94,17 @@ function runtrial(trial, stream, progress)
       end
       ip.genotypes[i] = choice
     end
-    NK.moransel!(ip, M)
-
+    if S == "M"
+      NK.moransel!(ip, M)
+    elseif S == "P"
+      NK.propsel!(ip)
+    elseif S == "T"        # tournament selection
+      NK.tournsel!(ip, 2)  # for now, use tournament size 2
+    elseif S == "N"        # no selection
+      continue
+    else
+      error("Illegal selection type: ", S)
+    end
     PM.next!(progress)
   end
 end

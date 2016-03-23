@@ -3,7 +3,8 @@ N     : 32      # N parameter of NK
 K     : 16      # K parameter of NK
 P     : 100     # Population size
 G     : 100     # Generations
-S     : M       # Type of selection for intelligence:  M: moran, P: proportional, T: tournament
+S     : ":M"    # Type of selection for intelligence:
+                # ":M" = Moran, ":P" = Proportional, ":T" = Tournament
 E     : 2       # Elite carryover
 C     : 5       # Intelligence choices
 M     : 100     # Moran selection rounds

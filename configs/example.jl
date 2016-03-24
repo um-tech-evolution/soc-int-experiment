@@ -1,7 +1,7 @@
 const N     = 32      # N parameter of NK
-const K     = 16      # K parameter of NK
 const P     = 100     # Population size
 const G     = 100     # Generations
+const K     = 0:4:16  # K parameter of NK
 const S     = :M      # Type of selection for intelligence:
                       # :M = Moran, :P = Proportional, :T = Tournament
 const E     = 2       # Elite carryover

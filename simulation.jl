@@ -28,6 +28,7 @@ function writeheader(stream)
   line = join([
     "trial",
     "simulationType",
+    "K",
     "generation",
     "meanFitness",
     "medianFitness",
@@ -36,10 +37,11 @@ function writeheader(stream)
   write(stream, line, "\n")
 end
 
-function writerow(stream, trial, simtype, generation, fits)
+function writerow(stream, trial, simtype, kval, generation, fits)
   line = join([
     trial,
     simtype,
+    kval,
     generation,
     mean(fits),
     median(fits),
@@ -48,15 +50,15 @@ function writerow(stream, trial, simtype, generation, fits)
   write(stream, line, "\n")
 end
 
-function runtrial(trial, stream, progress)
-  l = NK.NKLandscape(N, K)
+function runtrial(trial, stream, progress, kval)
+  l = NK.NKLandscape(N, kval)
   p = rand(NK.Population, l, P)
 
   # Social
   sp = NK.Population(p)
   for i = 1:G
     fits = NK.popfits(sp)
-    writerow(stream, trial, "social", i, fits)
+    writerow(stream, trial, "social", kval, i, fits)
 
     NK.bwmutate!(sp, W_soc)
     NK.elitesel!(sp, E)
@@ -68,7 +70,7 @@ function runtrial(trial, stream, progress)
   ip = NK.Population(p)
   for i = 1:G
     fits = NK.popfits(ip)
-    writerow(stream, trial, "intelligence", i, fits)
+    writerow(stream, trial, "intelligence", kval, i, fits)
 
     for i = 1:NK.popsize(ip)
       g = ip.genotypes[i]
@@ -101,11 +103,17 @@ end
 # Run the simulation
 
 stream = open("$(simname).csv", "w")
-progress = PM.Progress(T * G * 2, 1, "Running...", 40)
+
+kvals = collect(K)
+
+progress = PM.Progress(T * G * 2 * length(kvals), 1, "Running...", 40)
+
 writeheader(stream)
-for trial = 1:T
-  runtrial(trial, stream, progress)
-  flush(stream)
+for kval = kvals
+  for trial = 1:T
+    runtrial(trial, stream, progress, kval)
+    flush(stream)
+  end
 end
 close(stream)
 

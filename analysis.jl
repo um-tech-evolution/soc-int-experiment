@@ -2,7 +2,6 @@ module SocIntAnalysis
 
 using DataFrames
 using Gadfly
-import YAML
 
 if length(ARGS) == 0
   error("No simulation config specified.")
@@ -10,7 +9,7 @@ end
 
 simname = ARGS[1]
 
-config = YAML.load_file("$(simname).yaml")
+include("$(simname).jl")
 
 df = readtable("$(simname).csv", makefactors=true, allowcomments=true)
 
@@ -27,7 +26,7 @@ end
 function drawPlot(variable)
   p = plot(df, x="generation", y=variable, color="simulationType",
     Geom.line,
-    Guide.title("$(variable) (N=$(config["N"]), K=$(config["K"]), SEL=$(config["S"]), Trials=$(config["T"]))"))
+    Guide.title("$(variable) (N=$(N), K=$(K), SEL=$(S), Trials=$(T))"))
   draw(SVG("$(simname)_$(variable).svg", 8inch, 8inch), p)
 end
 

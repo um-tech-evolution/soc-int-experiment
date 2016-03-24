@@ -3,28 +3,13 @@ import ProgressMeter
 const PM = ProgressMeter
 import NKLandscapes
 const NK = NKLandscapes
-import YAML
 
 if length(ARGS) == 0
     error("No simulation config specified.")
 end
 simname = ARGS[1]
 
-config = YAML.load_file("$(simname).yaml")
-getconfig(key) = config[key] |> string |> parse |> eval
-
-N     = getconfig("N")
-K     = getconfig("K")
-P     = getconfig("P")     # Population size
-G     = getconfig("G")     # Generations
-S     = getconfig("S")        # Intelligence selection type: M: moran; P: proportional; T: tournament; N: none
-E     = getconfig("E")     # Elite carryover
-C     = getconfig("C")     # Intelligence choices
-M     = getconfig("M")     # Moran selection rounds 
-T     = getconfig("T")     # Number of trials
-W_soc = getconfig("W_soc") # Bitwise mutation rate (social)
-W_int = getconfig("W_int") # Bitwise mutation rate (intelligence)
-
+include("$(simname).jl")
 
 function writeheader(stream)
   write(stream, join([
@@ -36,7 +21,9 @@ function writeheader(stream)
     "# E=$(E)",
     "# C=$(C)",
     "# M=$(M)",
-    "# T=$(T)"
+    "# T=$(T)",
+    "# W_soc=$(W_soc)",
+    "# W_int=$(W_int)"
   ], "\n"), "\n")
   line = join([
     "trial",

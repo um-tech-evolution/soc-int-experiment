@@ -3,7 +3,7 @@
 ## Prerequisites
 
   1. Julia 0.4.3
-  2. The `bits-refactor` branch of NKLandscapes.jl
+  2. Version 0.3.x of NKLandscapes.jl
   3. DataFrames.jl
   5. ProgressMeter.jl
   6. Gadfly.jl

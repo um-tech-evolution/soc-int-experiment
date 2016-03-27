@@ -1,8 +1,8 @@
 Pkg.init()
 
-Pkg.add("NKLandscapes")
-Pkg.checkout("NKLandscapes", "bits-refactor")
+Pkg.update()
 
+Pkg.add("NKLandscapes")
 Pkg.add("DataFrames")
 Pkg.add("Gadfly")
 Pkg.add("ProgressMeter")
